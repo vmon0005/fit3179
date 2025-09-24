@@ -14,7 +14,7 @@
     },
     {
       "data": {
-        "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/Data%20Vis%20Visits%20with%20Coords.csv"
+        "url": "https://raw.githubusercontent.com/vmon0005/fit3179/main/Data%20Vis%20Visits%20with%20Coords.csv"
       },
       "transform": [
         {"filter": "isValid(datum.longitude) && isValid(datum.latitude)"},
@@ -32,7 +32,7 @@
           "type": "quantitative",
           "title": "Visitors (thousand)",
           "scale": {"range": [40, 1800]}
-        },
+        }
       }
     }
   ],
