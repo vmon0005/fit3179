@@ -2,31 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>FIT3179 — Week 10 Interactive Visualisations</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Visitors to Australia — Vega-Lite Map</title>
-
   <!-- Vega libraries -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-
   <style>
-    body { margin: 0; padding: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#fafafa; }
-    .wrap { max-width: 1000px; margin: 0 auto; }
-    h1 { font-size: 1.1rem; margin: 0 0 12px; }
-    #vis { background:#fff; border-radius:12px; padding:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+    :root { --maxw: 1100px; }
+    body { margin: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#fafafa; color:#111; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; }
+    h1 { font-size: 1.4rem; margin: 0 0 18px; }
+    figure { margin: 0 0 32px; }
+    figcaption { margin-top: 8px; color:#555; font-size: 0.95rem; }
+    .vis { width: 100%; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Visitors to Australia — Vega-Lite Map</h1>
-    <div id="vis"></div>
-  </div>
+  <main class="wrap">
+    <h1>Week 10: Interactive Vega-Lite Visualisations</h1>
+
+    <figure>
+      <div id="viz1" class="vis"></div>
+      <figcaption><strong>Task 1:</strong> Tourism GDP — bar chart with brushable timeline (tooltips, filter, annotation).</figcaption>
+    </figure>
+
+    <figure>
+      <div id="viz2" class="vis"></div>
+      <figcaption>Week 9 Map — visitors to Australia (clean tooltips).</figcaption>
+    </figure>
+  </main>
 
   <script>
-  const specUrl = "int_map.json"; // or "int_map.json?v=2" to bust cache
-  vegaEmbed("#vis", specUrl, { actions: false }).catch(console.error);
-  </script>
+    // Embed Task 1 (new visualisation)
+    vegaEmbed("#viz1", "js/tourism_GDP.json", { actions: false })
+      .catch(console.error);
 
+    // Embed Week 9 map
+    vegaEmbed("#viz2", "int_map.json", { actions: false })
+      .catch(console.error);
+  </script>
 </body>
 </html>
