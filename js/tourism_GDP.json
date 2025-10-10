@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 900,
+  "width": 800,
   "data": {
     "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/gdp.csv",
     "format": {"type": "csv"}
