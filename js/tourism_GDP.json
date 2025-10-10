@@ -1,0 +1,110 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 900,
+  "data": {
+    "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/gdp.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {
+      "fold": [
+        "2004",
+        "2005",
+        "2006",
+        "2007",
+        "2008",
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023 Tourism GDP(B)"
+      ],
+      "as": ["YearLabel", "GDP_raw"]
+    },
+    {
+      "calculate": "replace(datum.YearLabel, ' Tourism GDP(B)', '')",
+      "as": "YearStr"
+    },
+    {"calculate": "toNumber(datum.YearStr)", "as": "YearNum"},
+    {"calculate": "toNumber(replace(datum.GDP_raw, /,/g, ''))", "as": "GDP"}
+  ],
+  "vconcat": [
+    {
+      "height": 340,
+      "transform": [{"filter": {"param": "year_brush"}}],
+      "mark": {"type": "bar"},
+      "encoding": {
+        "x": {
+          "field": "YearStr",
+          "type": "ordinal",
+          "title": "Year",
+          "axis": {
+            "labelAngle": 0,
+            "labelOverlap": true,
+            "labelExpr": "toNumber(datum.label) % 2 ? '' : datum.label"
+          },
+          "scale": {"paddingInner": 0.1, "paddingOuter": 0.05}
+        },
+        "y": {
+          "field": "GDP",
+          "type": "quantitative",
+          "title": "Tourism GDP (B)",
+          "axis": {"format": ",.0f"}
+        },
+        "tooltip": [
+          {"field": "YearStr", "type": "nominal", "title": "Year"},
+          {
+            "field": "GDP",
+            "type": "quantitative",
+            "title": "Tourism GDP (B)",
+            "format": ",.0f"
+          }
+        ]
+      }
+    },
+    {
+      "height": 80,
+      "mark": {"type": "line"},
+      "title": "Brush to select years",
+      "params": [
+        {
+          "name": "year_brush",
+          "select": {"type": "interval", "encodings": ["x"]}
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "YearStr",
+          "type": "ordinal",
+          "axis": {
+            "title": "",
+            "labelAngle": 0,
+            "labelOverlap": true,
+            "labelExpr": "toNumber(datum.label) % 2 ? '' : datum.label"
+          }
+        },
+        "y": {
+          "field": "GDP",
+          "type": "quantitative",
+          "title": "GDP",
+          "axis": {"tickCount": 3, "grid": false, "format": ",.0f"}
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"labelFont": "system-ui", "titleFont": "system-ui"},
+    "title": {"font": "system-ui"}
+  }
+}
