@@ -112,7 +112,7 @@
       align-items: center;
       gap: 0;
       border: 1px solid var(--border);
-      background: var(--card);
+      background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
       border-radius: 999px;
       overflow: hidden;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -162,14 +162,67 @@
       color: var(--text);
     }
 
-    /* Chart Containers */
-    #map {
-      min-height: 460px;
+    /* Map Section Layout - FIXED */
+    .map-container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
     }
 
+    .map-viz {
+      min-height: 460px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Ensure Vega embed containers fit properly */
+    .map-viz > div,
+    .map-viz canvas {
+      max-width: 100% !important;
+    }
+
+    .map-info {
+      background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .map-info h3 {
+      margin: 0 0 16px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .map-info p {
+      margin: 0;
+      line-height: 1.7;
+      color: var(--text);
+      font-size: 0.98rem;
+    }
+
+    .map-info.hidden {
+      display: none;
+    }
+
+    /* Chart Containers */
     #gdp-chart,
     #bubble-chart {
       min-height: 400px;
+      width: 100%;
+    }
+
+    #gdp-chart > div,
+    #bubble-chart > div {
+      max-width: 100% !important;
     }
 
     /* Error Messages */
@@ -225,6 +278,14 @@
         font-size: 1rem;
       }
 
+      .map-container {
+        grid-template-columns: 1fr;
+      }
+
+      .map-viz {
+        min-height: 360px;
+      }
+
       .section-title {
         font-size: 1.5rem;
         margin: 36px 0 20px;
@@ -233,10 +294,6 @@
       .toggle button {
         padding: 8px 14px;
         font-size: 0.9rem;
-      }
-
-      #map {
-        min-height: 360px;
       }
 
       #gdp-chart,
@@ -276,7 +333,17 @@
     </div>
 
     <section class="card">
-      <div id="map" aria-live="polite"></div>
+      <div class="map-container">
+        <div id="map" class="map-viz" aria-live="polite"></div>
+        <div class="map-info" id="info-international">
+          <h3>International Visitors</h3>
+          <p>Australia's top tourist source is New Zealand, with an estimated 1.2 million visitors in 2024. Other significant sources include China, the USA, and the UK. (Fun Fact! Australians' biggest tourist destination is Indonesia)</p>
+        </div>
+        <div class="map-info hidden" id="info-domestic">
+          <h3>Domestic Tourism</h3>
+          <p>The greatest number of interstate visits were to New South Wales, followed closely by Victoria. Despite having 30% less visitors than Victoria, Queensland enjoyed higher total spending, likely due to its status as a domestic holiday destination.</p>
+        </div>
+      </div>
     </section>
 
     <h2 class="section-title">Tourism & GDP Analysis</h2>
@@ -292,7 +359,12 @@
     </section>
 
     <footer>
-      <p>Built with Vega-Lite. Data sources in repo. &nbsp;•&nbsp; Toggle to view different datasets.</p>
+      <p>Built by Vlad Monakhov 19/10/25. Sources: </p>
+      <p>https://www.tra.gov.au/en/international/international-tourism-results#ref8</p>
+      <p>https://www.tra.gov.au/en/domestic/domestic-tourism-statistics-results</p>
+      <p>https://www.tra.gov.au/en/economic-analysis/quarterly-tourism-labour-force-statistics</p>
+      <p>Generative AI was used in this project.</p>
+
     </footer>
   </div>
 
@@ -308,6 +380,8 @@
     const bubbleEl = document.querySelector('#bubble-chart');
     const btnIntl = document.querySelector('#btn-international');
     const btnDom = document.querySelector('#btn-domestic');
+    const infoIntl = document.querySelector('#info-international');
+    const infoDom = document.querySelector('#info-domestic');
 
     function setActive(which) {
       if (which === 'intl') {
@@ -315,18 +389,26 @@
         btnIntl.setAttribute('aria-selected', 'true');
         btnDom.classList.remove('active');
         btnDom.setAttribute('aria-selected', 'false');
+        infoIntl.classList.remove('hidden');
+        infoDom.classList.add('hidden');
       } else {
         btnDom.classList.add('active');
         btnDom.setAttribute('aria-selected', 'true');
         btnIntl.classList.remove('active');
         btnIntl.setAttribute('aria-selected', 'false');
+        infoDom.classList.remove('hidden');
+        infoIntl.classList.add('hidden');
       }
     }
 
     async function showSpec(path, targetEl) {
       targetEl.innerHTML = '';
       try {
-        await vegaEmbed(targetEl, path, { actions: false, tooltip: true });
+        await vegaEmbed(targetEl, path, { 
+          actions: false, 
+          tooltip: true,
+          renderer: 'canvas'
+        });
       } catch (err) {
         targetEl.innerHTML = `<div style="padding:12px;color:#b91c1c">Failed to load: ${path}<br><small>${err.message}</small></div>`;
       }
