@@ -2,45 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>FIT3179 — Week 10 Interactive Visualisations</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Australian Tourism — FIT3179</title>
+
   <!-- Vega libraries -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
   <style>
-    :root { --maxw: 1100px; }
-    body { margin: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#fafafa; color:#111; }
-    .wrap { max-width: var(--maxw); margin: 0 auto; }
-    h1 { font-size: 1.4rem; margin: 0 0 18px; }
-    figure { margin: 0 0 32px; }
-    figcaption { margin-top: 8px; color:#555; font-size: 0.95rem; }
-    .vis { display: flex; justify-content: center; }
+    :root {
+      --bg: #fafafa;
+      --text: #222;
+      --muted: #666;
+      --accent: #0f766e;
+      --accent-contrast: #ffffff;
+      --card: #ffffff;
+      --border: #e6e6e6;
+    }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    header { text-align: center; margin-bottom: 18px; }
+    header h1 { margin: 0; font-size: clamp(1.6rem, 3.5vw, 2.4rem); letter-spacing: 0.2px; }
+    header p { margin: 6px 0 0; color: var(--muted); }
+
+    .toggle {
+      display: inline-flex; align-items: center; gap: 0; border: 1px solid var(--border); background: var(--card);
+      border-radius: 999px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .toggle button {
+      appearance: none; border: 0; padding: 10px 16px; font-size: 0.95rem; background: transparent;
+      cursor: pointer; color: var(--muted); transition: background 0.15s ease, color 0.15s ease;
+    }
+    .toggle button.active { background: var(--accent); color: var(--accent-contrast); }
+    .toggle button:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+    .controls { display: flex; justify-content: center; margin: 16px 0 20px; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 24px; }
+
+    .section-title {
+      text-align: center;
+      margin: 48px 0 24px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    #map { min-height: 460px; }
+    #gdp-chart, #bubble-chart { min-height: 400px; }
+
+    footer { margin-top: 28px; color: var(--muted); font-size: 0.9rem; text-align: center; }
+    footer a { color: inherit; }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <h1>Week 10: Interactive Vega-Lite Visualisations</h1>
+  <div class="wrap">
+    <header>
+      <h1>Australian Tourism</h1>
+      <p>Switch between domestic and international visitor maps.</p>
+    </header>
 
-    <figure>
-      <div id="viz1" class="vis"></div>
-      <figcaption><strong>Task 1:</strong> Australia's Tourism GDP by year($M).</figcaption>
-    </figure>
+    <div class="controls" role="tablist" aria-label="Map Toggle">
+      <div class="toggle">
+        <button id="btn-international" role="tab" aria-selected="true" aria-controls="map" class="active">International</button>
+        <button id="btn-domestic" role="tab" aria-selected="false" aria-controls="map">Domestic</button>
+      </div>
+    </div>
 
-    <figure>
-      <div id="viz2" class="vis"></div>
-      <figcaption>International visitors to Australia 2024.</figcaption>
-    </figure>
-  </main>
+    <section class="card">
+      <div id="map" aria-live="polite"></div>
+    </section>
+
+    <h2 class="section-title">Tourism & GDP Analysis</h2>
+
+    <section class="card">
+      <div id="gdp-chart"></div>
+    </section>
+
+    <h2 class="section-title">Regional Tourism Employment</h2>
+
+    <section class="card">
+      <div id="bubble-chart"></div>
+    </section>
+
+    <footer>
+      <p>Built with Vega-Lite. Data sources in repo. &nbsp;•&nbsp; Toggle to view different datasets.</p>
+    </footer>
+  </div>
 
   <script>
-    // Embed Task 1 (new visualisation)
-    vegaEmbed("#viz1", "js/tourism_GDP.json", { actions: false })
-      .catch(console.error);
+    // --- Paths to Vega-Lite specs ---
+    const INTL_SPEC = 'int_map.json';
+    const DOM_SPEC = 'js/Domestic_Map_Done.json';
+    const GDP_SPEC = 'js/tourism_GDP.json';
+    const BUBBLE_SPEC = 'js/bubble_regions.json';
 
-    // Embed Week 9 map
-    vegaEmbed("#viz2", "int_map.json", { actions: false })
-      .catch(console.error);
+    const mapEl = document.querySelector('#map');
+    const gdpEl = document.querySelector('#gdp-chart');
+    const bubbleEl = document.querySelector('#bubble-chart');
+    const btnIntl = document.querySelector('#btn-international');
+    const btnDom = document.querySelector('#btn-domestic');
+
+    function setActive(which) {
+      if (which === 'intl') {
+        btnIntl.classList.add('active');
+        btnIntl.setAttribute('aria-selected', 'true');
+        btnDom.classList.remove('active');
+        btnDom.setAttribute('aria-selected', 'false');
+      } else {
+        btnDom.classList.add('active');
+        btnDom.setAttribute('aria-selected', 'true');
+        btnIntl.classList.remove('active');
+        btnIntl.setAttribute('aria-selected', 'false');
+      }
+    }
+
+    async function showSpec(path, targetEl) {
+      targetEl.innerHTML = '';
+      try {
+        await vegaEmbed(targetEl, path, { actions: false, tooltip: true });
+      } catch (err) {
+        targetEl.innerHTML = `<div style="padding:12px;color:#b91c1c">Failed to load: ${path}<br><small>${err.message}</small></div>`;
+      }
+    }
+
+    btnIntl.addEventListener('click', () => { setActive('intl'); showSpec(INTL_SPEC, mapEl); });
+    btnDom.addEventListener('click', () => { setActive('dom'); showSpec(DOM_SPEC, mapEl); });
+
+    // Initialize all charts
+    setActive('intl');
+    showSpec(INTL_SPEC, mapEl);
+    showSpec(GDP_SPEC, gdpEl);
+    showSpec(BUBBLE_SPEC, bubbleEl);
   </script>
 </body>
 </html>
