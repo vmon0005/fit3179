@@ -1,0 +1,78 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 850,
+  "height": 520,
+  "title": "Tourism Employment by State and Region",
+  "data": {
+    "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/csv/Tourism%20Employment%20Data.csv"
+  },
+  "transform": [
+    {
+      "calculate": "datum['Tourism Employment'] / datum['Estimated Population']",
+      "as": "Employment_per_Capita"
+    }
+  ],
+  "mark": {
+    "type": "circle",
+    "opacity": 0.75,
+    "stroke": "white",
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "x": {
+      "field": "Tourism Employment",
+      "type": "quantitative",
+      "title": "Tourism Jobs (log scale)",
+      "scale": {"type": "log", "domainMin": 7},
+      "axis": {"grid": true, "format": ","}
+    },
+    "y": {
+      "field": "Employment_per_Capita",
+      "type": "quantitative",
+      "title": "Tourism-related Employment per Capita",
+      "axis": {"grid": true, "format": ".2%"}
+    },
+    "size": {
+      "field": "Estimated Population",
+      "type": "quantitative",
+      "title": "Estimated Population",
+      "scale": {"range": [100, 3000]},
+      "legend": null
+    },
+    "color": {
+      "field": "State",
+      "type": "nominal",
+      "title": "State/Territory",
+      "scale": {"scheme": "tableau10"},
+      "legend": {"orient": "right"}
+    },
+    "tooltip": [
+      {"field": "Region", "type": "nominal", "title": "Region"},
+      {"field": "State", "type": "nominal", "title": "State"},
+      {
+        "field": "Tourism Employment",
+        "type": "quantitative",
+        "title": "Tourism Employment",
+        "format": ","
+      },
+      {
+        "field": "Estimated Population",
+        "type": "quantitative",
+        "title": "Population",
+        "format": ","
+      },
+      {
+        "field": "Employment_per_Capita",
+        "type": "quantitative",
+        "title": "Employment per Capita",
+        "format": ".2%"
+      }
+    ]
+  },
+  "config": {
+    "background": "#fafafa",
+    "view": {"stroke": null},
+    "title": {"fontSize": 18, "anchor": "start"},
+    "axis": {"labelFontSize": 12, "titleFontSize": 13}
+  }
+}
