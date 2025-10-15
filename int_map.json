@@ -41,7 +41,11 @@
           "title": "Visitors (thousand)",
           "scale": { "range": [40, 1800] },
           "legend": null
-        }
+        },
+        "tooltip": [
+          { "field": "Country_of_Origin", "type": "nominal", "title": "Country" },
+          { "field": "visitors_num", "type": "quantitative", "title": "Visitors (thousand)", "format": "," }
+        ]
       }
     }
   ],
