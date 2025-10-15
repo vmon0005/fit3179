@@ -3,47 +3,38 @@
   "width": 800,
   "height": 600,
   "title": "Australian Domestic Tourism by State",
-  "projection": {"type": "mercator", "center": [133, -28], "scale": 800},
+  "projection": { "type": "mercator", "center": [133, -28], "scale": 800 },
   "layer": [
-    {"data": {"sphere": true}, "mark": {"type": "geoshape", "fill": "#add8e6"}},
+    {
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "fill": "#add8e6" }
+    },
     {
       "data": {
         "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/Australia%20Map%20States%20Provinces.json",
-        "format": {
-          "type": "topojson",
-          "feature": "ne_50m_admin_1_states_provinces"
-        }
+        "format": { "type": "topojson", "feature": "ne_50m_admin_1_states_provinces" }
       },
-      "mark": {
-        "type": "geoshape",
-        "fill": "#f2f2f2",
-        "stroke": "white",
-        "strokeWidth": 1
-      }
+      "mark": { "type": "geoshape", "fill": "#f2f2f2", "stroke": "white", "strokeWidth": 1 }
     },
     {
       "data": {
         "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/domestic.csv"
       },
       "transform": [
-        {
-          "calculate": "toNumber(replace(datum['1000s of Visitors'], /,/g, ''))",
-          "as": "visitors_clean"
-        }
+        { "calculate": "toNumber(replace(datum['1000s of Visitors'], /,/g, ''))", "as": "visitors_clean" }
       ],
-      "mark": {"type": "circle", "opacity": 0.7, "color": "#ff6b6b"},
+      "mark": { "type": "circle", "opacity": 0.7, "color": "#4CAF50" },
       "encoding": {
-        "longitude": {"field": "lon", "type": "quantitative"},
-        "latitude": {"field": "lat", "type": "quantitative"},
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude": { "field": "lat", "type": "quantitative" },
         "size": {
           "field": "visitors_clean",
           "type": "quantitative",
           "title": "Visitors (1000s)",
-          "scale": {"range": [100, 3000]},
+          "scale": { "range": [100, 3000] },
           "legend": null
         }
       }
     }
-  ],
-  "config": {}
+  ]
 }
