@@ -13,17 +13,35 @@
       ],
       "as": ["YearLabel","GDP_raw"]
     },
-    { "calculate": "replace(datum.YearLabel, ' Tourism GDP(B)', '')", "as": "YearStr" },
-    { "calculate": "toNumber(datum.YearStr)", "as": "YearNum" },
-    { "calculate": "toNumber(replace(datum.GDP_raw, /,/g, ''))", "as": "GDP" }
+    {
+      "calculate": "replace(datum.YearLabel, ' Tourism GDP(B)', '')",
+      "as": "YearStr"
+    },
+    {
+      "calculate": "toNumber(datum.YearStr)",
+      "as": "YearNum"
+    },
+    {
+      "calculate": "toNumber(replace(datum.GDP_raw, /,/g, ''))",
+      "as": "GDP"
+    }
   ],
   "vconcat": [
     {
       "height": 340,
-      "transform": [{ "filter": { "param": "year_brush" } }],
+      "transform": [
+        {
+          "filter": {
+            "param": "year_brush"
+          }
+        }
+      ],
       "layer": [
         {
-          "mark": {"type": "bar"},
+          "mark": {
+            "type": "bar",
+            "color": "#4CAF50"
+          },
           "encoding": {
             "x": {
               "field": "YearStr",
@@ -34,30 +52,47 @@
                 "labelOverlap": true,
                 "labelExpr": "toNumber(datum.label) % 2 ? '' : datum.label"
               },
-              "scale": {"paddingInner": 0.1, "paddingOuter": 0.05}
+              "scale": {
+                "paddingInner": 0.1,
+                "paddingOuter": 0.05
+              }
             },
             "y": {
               "field": "GDP",
               "type": "quantitative",
-              "title": "Tourism GDP (B)",
-              "axis": {"format": ",.0f"}
+              "title": "Tourism GDP (Billion AUD)",
+              "axis": {
+                "format": ",.0f"
+              }
             },
             "tooltip": [
-              {"field": "YearStr", "type": "nominal", "title": "Year"},
-              {"field": "GDP", "type": "quantitative", "title": "Tourism GDP (B)", "format": ",.0f"}
+              {
+                "field": "YearStr",
+                "type": "nominal",
+                "title": "Year"
+              },
+              {
+                "field": "GDP",
+                "type": "quantitative",
+                "title": "Tourism GDP (B)",
+                "format": ",.2f"
+              }
             ]
           }
         },
         {
           "mark": {
             "type": "rect",
-            "color": "lightgray",
-            "opacity": 0.025,
-            "zindex": 0
+            "color": "#fca5a5",
+            "opacity": 0.05
           },
           "encoding": {
-            "x": {"datum": "2019"},
-            "x2": {"datum": "2021"}
+            "x": {
+              "datum": "2019"
+            },
+            "x2": {
+              "datum": "2021"
+            }
           }
         },
         {
@@ -67,26 +102,40 @@
             "dy": -150,
             "fontStyle": "italic",
             "fontSize": 14,
-            "color": "gray",
-            "zindex": 1
+            "color": "#991b1b"
           },
           "encoding": {
-            "x": {"datum": "2020"},
-            "text": {"value": "COVID-19"}
+            "x": {
+              "datum": "2020"
+            },
+            "text": {
+              "value": "COVID-19 Pandemic"
+            }
           }
         }
       ]
     },
     {
       "height": 80,
-      "mark": {"type": "line"},
       "title": "Brush to select years",
       "params": [
         {
           "name": "year_brush",
-          "select": {"type": "interval", "encodings": ["x"]}
+          "select": {
+            "type": "interval",
+            "encodings": ["x"]
+          }
         }
       ],
+      "mark": {
+        "type": "line",
+        "color": "#4CAF50",
+        "point": {
+          "size": 50,
+          "filled": true
+        },
+        "strokeWidth": 2
+      },
       "encoding": {
         "x": {
           "field": "YearStr",
@@ -101,15 +150,26 @@
         "y": {
           "field": "GDP",
           "type": "quantitative",
-          "title": "GDP",
-          "axis": {"tickCount": 3, "grid": false, "format": ",.0f"}
+          "title": "GDP (B)",
+          "axis": {
+            "tickCount": 3,
+            "grid": false,
+            "format": ",.0f"
+          }
         }
       }
     }
   ],
   "config": {
-    "view": {"stroke": null},
-    "axis": {"labelFont": "system-ui", "titleFont": "system-ui"},
-    "title": {"font": "system-ui"}
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "labelFont": "system-ui",
+      "titleFont": "system-ui"
+    },
+    "title": {
+      "font": "system-ui"
+    }
   }
 }
