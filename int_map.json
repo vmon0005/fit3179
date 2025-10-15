@@ -3,40 +3,47 @@
   "width": 800,
   "height": 450,
   "title": "Australia's Top Tourism Sources",
-  "projection": {"type": "equalEarth"},
+  "projection": { "type": "equalEarth" },
   "layer": [
-    { "data": {"sphere": true},
-      "mark": {"type": "geoshape", "fill": "#dbeefb"} },
-
-    { "data": {
+    {
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "fill": "#add8e6" }
+    },
+    {
+      "data": {
         "url": "https://raw.githubusercontent.com/vmon0005/fit3179/main/world_110.json",
-        "format": {"type": "topojson", "feature": "ne_50m_graticules_5"}
+        "format": { "type": "topojson", "feature": "ne_50m_graticules_5" }
       },
-      "mark": {"type": "geoshape", "stroke": "#d0d0d0", "strokeWidth": 0.5, "fill": null}
+      "mark": { "type": "geoshape", "stroke": "#d0d0d0", "strokeWidth": 0.5, "fill": null }
     },
-
-    { "data": {
+    {
+      "data": {
         "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/ne_110m_admin_0_countries.topojson",
-        "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+        "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
       },
-      "mark": {"type": "geoshape", "fill": "floralwhite", "stroke": "lightgray"}
+      "mark": { "type": "geoshape", "fill": "#f2f2f2", "stroke": "white", "strokeWidth": 1 }
     },
-
-    { "data": {
+    {
+      "data": {
         "url": "https://raw.githubusercontent.com/vmon0005/fit3179/main/Data%20Vis%20Visits%20with%20Coords.csv"
       },
       "transform": [
-        {"filter": "isValid(datum.longitude) && isValid(datum.latitude)"},
-        {"calculate": "toNumber(replace(datum.visitors_1000, /,/g, ''))", "as": "visitors_num"}
+        { "filter": "isValid(datum.longitude) && isValid(datum.latitude)" },
+        { "calculate": "toNumber(replace(datum.visitors_1000, /,/g, ''))", "as": "visitors_num" }
       ],
-      "mark": {"type": "circle", "opacity": 0.85},
+      "mark": { "type": "circle", "opacity": 0.7, "color": "#4CAF50" },
       "encoding": {
-        "longitude": {"field": "longitude", "type": "quantitative"},
-        "latitude": {"field": "latitude", "type": "quantitative"},
-        "size": {"field": "visitors_num", "type": "quantitative", "title": "Visitors (thousand)",
-                 "scale": {"range": [40, 1800]}}
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "latitude": { "field": "latitude", "type": "quantitative" },
+        "size": {
+          "field": "visitors_num",
+          "type": "quantitative",
+          "title": "Visitors (thousand)",
+          "scale": { "range": [40, 1800] },
+          "legend": null
+        }
       }
     }
   ],
-  "config": {"view": {"stroke": null}}
+  "config": { "view": { "stroke": null } }
 }
