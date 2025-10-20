@@ -162,42 +162,22 @@
       color: var(--text);
     }
 
-    /* Map Section Layout - FIXED */
-    .map-container {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .map-viz {
-      min-height: 460px;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    /* Ensure Vega embed containers fit properly */
-    .map-viz > div,
-    .map-viz canvas {
-      max-width: 100% !important;
+    /* Map Info Box - Above Map */
+    .map-info-container {
+      margin-bottom: 20px;
     }
 
     .map-info {
       background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 24px;
-      height: fit-content;
+      padding: 20px 24px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     .map-info h3 {
-      margin: 0 0 16px 0;
-      font-size: 1.3rem;
+      margin: 0 0 12px 0;
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--accent);
     }
@@ -213,7 +193,37 @@
       display: none;
     }
 
+    .map-viz {
+      min-height: 460px;
+      width: 100%;
+      overflow: visible;
+      position: relative;
+    }
+
+    /* Ensure Vega embed containers fit properly */
+    .map-viz > div {
+      max-width: 100% !important;
+      position: relative;
+    }
+    
+    .map-viz canvas {
+      max-width: 100% !important;
+      display: block;
+    }
+    
+    /* Fix tooltip positioning */
+    #vg-tooltip-element {
+      position: fixed !important;
+    }
+
     /* Chart Containers */
+    .chart-section {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
     #gdp-chart,
     #bubble-chart {
       min-height: 400px;
@@ -223,6 +233,32 @@
     #gdp-chart > div,
     #bubble-chart > div {
       max-width: 100% !important;
+    }
+
+    .chart-info {
+      background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .chart-info h3 {
+      margin: 0 0 16px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .chart-info p {
+      margin: 0;
+      line-height: 1.7;
+      color: var(--text);
+      font-size: 0.98rem;
     }
 
     /* Error Messages */
@@ -278,7 +314,7 @@
         font-size: 1rem;
       }
 
-      .map-container {
+      .chart-section {
         grid-template-columns: 1fr;
       }
 
@@ -333,8 +369,7 @@
     </div>
 
     <section class="card">
-      <div class="map-container">
-        <div id="map" class="map-viz" aria-live="polite"></div>
+      <div class="map-info-container">
         <div class="map-info" id="info-international">
           <h3>International Visitors</h3>
           <p>Australia's top tourist source is New Zealand, with an estimated 1.2 million visitors in 2024. Other significant sources include China, the USA, and the UK. (Fun Fact! Australians' biggest tourist destination is Indonesia)</p>
@@ -344,12 +379,19 @@
           <p>The greatest number of interstate visits were to New South Wales, followed closely by Victoria. Despite having 30% less visitors than Victoria, Queensland enjoyed higher total spending, likely due to its status as a domestic holiday destination.</p>
         </div>
       </div>
+      <div id="map" class="map-viz" aria-live="polite"></div>
     </section>
 
     <h2 class="section-title">Tourism & GDP Analysis</h2>
 
     <section class="card">
-      <div id="gdp-chart"></div>
+      <div class="chart-section">
+        <div id="gdp-chart"></div>
+        <div class="chart-info">
+          <h3>Tourism GDP Trends</h3>
+          <p>This visualization shows the trend of Australia's Tourism GDP (in billions of AUD) from 2004 to 2022. Australia's tourism industry shows steady growth aside from the COVID-19 era, where travel restrictions severely impacted the industry. Since then, however, Australian tourism has bounced back stronger than ever!</p>
+        </div>
+      </div>
     </section>
 
     <h2 class="section-title">Tourism Industry Employment By Region</h2>
@@ -404,11 +446,17 @@
     async function showSpec(path, targetEl) {
       targetEl.innerHTML = '';
       try {
-        await vegaEmbed(targetEl, path, { 
+        const result = await vegaEmbed(targetEl, path, { 
           actions: false, 
           tooltip: true,
           renderer: 'canvas'
         });
+        // Force a resize to ensure proper positioning
+        setTimeout(() => {
+          if (result && result.view) {
+            result.view.resize();
+          }
+        }, 100);
       } catch (err) {
         targetEl.innerHTML = `<div style="padding:12px;color:#b91c1c">Failed to load: ${path}<br><small>${err.message}</small></div>`;
       }
