@@ -14,7 +14,7 @@
         "url": "https://raw.githubusercontent.com/vmon0005/fit3179/refs/heads/main/Australia%20Map%20States%20Provinces.json",
         "format": { "type": "topojson", "feature": "ne_50m_admin_1_states_provinces" }
       },
-      "mark": { "type": "geoshape", "fill": "#f2f2f2", "stroke": "white", "strokeWidth": 1 }
+      "mark": { "type": "geoshape", "fill": "#f2f2f2", "stroke": "#666666", "strokeWidth": 0.8 }
     },
     {
       "data": {
@@ -33,7 +33,11 @@
           "title": "Visitors (1000s)",
           "scale": { "range": [100, 3000] },
           "legend": null
-        }
+        },
+        "tooltip": [
+          { "field": "State", "type": "nominal", "title": "State/Territory" },
+          { "field": "visitors_clean", "type": "quantitative", "title": "Visitors (1000s)", "format": "," }
+        ]
       }
     }
   ]
